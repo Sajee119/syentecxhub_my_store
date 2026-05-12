@@ -2,6 +2,12 @@
 
 A modern, production-ready e-commerce platform built with the MERN stack (MongoDB, Express, React, Node.js) featuring a professional UI/UX with dark mode, admin dashboard, and complete shopping functionality.
 
+## 📝 GitHub Description
+
+**A full-featured MERN e-commerce platform with admin dashboard, JWT auth, Stripe/PayPal integration, product management, order tracking, dark mode, and responsive design.**
+
+**Keywords:** e-commerce, MERN, React, Node.js, MongoDB, Express, Tailwind CSS, JWT, Payment Gateway, Admin Dashboard, Full-Stack
+
 ## 🚀 Tech Stack
 
 ### Frontend
