@@ -20,8 +20,12 @@ export const CartProvider = ({ children }) => {
     try {
       const { data } = await API.get('/cart');
       setCart(data.cart);
-    } catch { setCart({ items: [] }); }
-    finally { setLoading(false); }
+    } catch { 
+      setCart({ items: [] }); 
+    }
+    finally { 
+      setLoading(false); 
+    }
   }, [user]);
 
   useEffect(() => { fetchCart(); }, [fetchCart]);
