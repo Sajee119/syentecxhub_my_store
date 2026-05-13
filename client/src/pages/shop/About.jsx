@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import { Award, Heart, Shield, TrendingUp, Users, Globe, ArrowRight } from 'lucide-react';
+import { FaBriefcase, FaCode, FaEnvelope, FaGithub, FaLinkedin, FaPhone, FaTwitter } from 'react-icons/fa';
 import Breadcrumb from '../../components/common/Breadcrumb';
 import Seo from '../../components/common/Seo';
+import developerProfile from '../../assets/developer-profile.png';
 
 const stats = [
   { icon: Users, value: '50K+', label: 'Happy Customers' },
@@ -15,13 +17,6 @@ const values = [
   { icon: Shield, title: 'Quality Guaranteed', desc: 'We stand behind every product we sell. If you are not happy, we make it right.' },
   { icon: TrendingUp, title: 'Innovation', desc: 'We constantly evolve to bring you the latest trends and best shopping experience.' },
   { icon: Globe, title: 'Sustainability', desc: 'Committed to eco-friendly practices and sustainable sourcing across our supply chain.' },
-];
-
-const team = [
-  { name: 'Sarah Mitchell', role: 'CEO & Founder', img: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200' },
-  { name: 'David Chen', role: 'CTO', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200' },
-  { name: 'Emily Rodriguez', role: 'Head of Design', img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200' },
-  { name: 'James Wilson', role: 'VP of Operations', img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200' },
 ];
 
 export default function About() {
@@ -111,21 +106,90 @@ export default function About() {
       </section>
 
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-20">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Meet Our Team</h2>
-          <p className="text-gray-500">The people behind My Store</p>
-        </div>
-        <div className="grid md:grid-cols-4 gap-8">
-          {team.map((member, i) => (
-            <div key={i} className="text-center group">
-              <div className="w-32 h-32 rounded-full mx-auto mb-4 overflow-hidden ring-4 ring-primary-100 dark:ring-primary-900/30 group-hover:ring-primary-300 transition-all">
-                <img src={member.img} alt={member.name} className="w-full h-full object-cover" />
+        {/* Developer Section */}
+        <section data-tour="developer" className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden mb-8">
+          <div className="p-6 md:p-8">
+            <h2 className="text-2xl font-bold flex items-center gap-3 mb-6">
+              <span className="text-indigo-500"><FaCode className="w-6 h-6" /></span>
+              Developer
+            </h2>
+            <div className="flex flex-col md:flex-row gap-8">
+              <div className="flex-shrink-0">
+                <div className="w-48 h-48 rounded-full overflow-hidden bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                  {developerProfile ? (
+                    <img
+                      src={developerProfile}
+                      alt="Sivanadarajah Sajeepan - Developer Profile"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="text-white text-6xl font-bold">SS</div>
+                  )}
+                </div>
               </div>
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100">{member.name}</h3>
-              <p className="text-sm text-gray-500">{member.role}</p>
+              <div className="flex-1">
+                <h3 className="text-2xl font-bold mb-2">Sivanadarajah Sajeepan</h3>
+                <p className="text-indigo-600 dark:text-indigo-400 font-semibold mb-1">Software Engineer</p>
+                <p className="text-slate-500 dark:text-slate-400 mb-4">Full Stack Developer</p>
+                <p className="text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
+                  Sajeepan is a passionate full stack developer with expertise in building modern web applications.
+                  With a strong background in JavaScript, React, and Node.js, Sajeepan is dedicated to creating seamless
+                  user experiences and efficient code. When not coding, Sajeepan enjoys hiking and exploring new technologies.
+                </p>
+                <div className="space-y-2 mb-6">
+                  <p className="flex items-center gap-3 text-sm">
+                    <span className="text-indigo-500 w-5"><FaEnvelope className="w-4 h-4" /></span>
+                    <span className="text-slate-600 dark:text-slate-300">Sajeepan634@gmail.com</span>
+                  </p>
+                  <p className="flex items-center gap-3 text-sm">
+                    <span className="text-indigo-500 w-5"><FaPhone className="w-4 h-4" /></span>
+                    <span className="text-slate-600 dark:text-slate-300">+94783566823</span>
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  <a
+                    href="https://www.linkedin.com/in/sivanadaraja-sajeepan/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition text-sm font-medium"
+                  >
+                    <FaLinkedin className="w-4 h-4" /> LinkedIn
+                  </a>
+                  <a
+                    href="https://github.com/Sajee119"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg transition text-sm font-medium"
+                  >
+                    <FaGithub className="w-4 h-4" /> GitHub
+                  </a>
+                  <a
+                    href="https://x.com/SSajeepan3492"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg transition text-sm font-medium"
+                  >
+                    <FaTwitter className="w-4 h-4" /> X
+                  </a>
+                  <a
+                    href="mailto:Sajeepan634@gmail.com"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition text-sm font-medium"
+                  >
+                    <FaEnvelope className="w-4 h-4" /> Email
+                  </a>
+                  <a
+                    href="https://sajeepan-portfolio.vercel.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition text-sm font-medium"
+                  >
+                    <FaBriefcase className="w-4 h-4" /> Portfolio
+                  </a>
+                </div>
+              </div>
             </div>
-          ))}
-        </div>
+          </div>
+        </section>
       </section>
     </div>
   );

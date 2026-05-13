@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { Trash2, Mail } from 'lucide-react';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
+import ConfirmationModal from '../../components/common/ConfirmationModal';
 
 export default function AdminNewsletter() {
   const [subscribers, setSubscribers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
+  const [deleteSubscriber, setDeleteSubscriber] = useState(null);
 
   useEffect(() => { fetchSubscribers(); }, [page]);
 
@@ -19,10 +21,11 @@ export default function AdminNewsletter() {
     } catch {} finally { setLoading(false); }
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('Remove this subscriber?')) return;
-    await API.delete(`/newsletter/${id}`);
+  const handleDelete = async () => {
+    if (!deleteSubscriber) return;
+    await API.delete(`/newsletter/${deleteSubscriber._id}`);
     toast.success('Subscriber removed');
+    setDeleteSubscriber(null);
     fetchSubscribers();
   };
 
@@ -52,7 +55,7 @@ export default function AdminNewsletter() {
                   </td>
                   <td className="p-4 text-gray-500">{new Date(sub.createdAt).toLocaleDateString()}</td>
                   <td className="p-4 text-right">
-                    <button onClick={() => handleDelete(sub._id)} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"><Trash2 className="w-4 h-4" /></button>
+                    <button onClick={() => setDeleteSubscriber(sub)} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"><Trash2 className="w-4 h-4" /></button>
                   </td>
                 </tr>
               ))}
@@ -73,6 +76,15 @@ export default function AdminNewsletter() {
           ))}
         </div>
       )}
+
+      <ConfirmationModal
+        open={!!deleteSubscriber}
+        title="Remove this subscriber?"
+        description={deleteSubscriber ? `This will remove ${deleteSubscriber.email} from the newsletter list.` : 'This will remove the selected subscriber from the newsletter list.'}
+        confirmLabel="Remove subscriber"
+        onCancel={() => setDeleteSubscriber(null)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

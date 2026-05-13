@@ -3,10 +3,12 @@ import { Bell, Check, Trash2, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
+import ConfirmationModal from '../../components/common/ConfirmationModal';
 
 export default function AdminBackInStock() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deleteRequest, setDeleteRequest] = useState(null);
 
   useEffect(() => { fetchRequests(); }, []);
 
@@ -23,10 +25,11 @@ export default function AdminBackInStock() {
     fetchRequests();
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('Delete this request?')) return;
-    await API.delete(`/back-in-stock/${id}`);
+  const handleDelete = async () => {
+    if (!deleteRequest) return;
+    await API.delete(`/back-in-stock/${deleteRequest._id}`);
     toast.success('Request deleted');
+    setDeleteRequest(null);
     fetchRequests();
   };
 
@@ -58,11 +61,20 @@ export default function AdminBackInStock() {
             </div>
             <div className="flex gap-2">
               <button onClick={() => handleNotify(req._id)} className="btn-primary text-xs flex items-center gap-1 py-2"><Bell className="w-3 h-3" /> Notify</button>
-              <button onClick={() => handleDelete(req._id)} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"><Trash2 className="w-4 h-4" /></button>
+              <button onClick={() => setDeleteRequest(req)} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"><Trash2 className="w-4 h-4" /></button>
             </div>
           </div>
         ))}
       </div>
+
+      <ConfirmationModal
+        open={!!deleteRequest}
+        title="Delete this request?"
+        description={deleteRequest ? `This will remove the back-in-stock request for ${deleteRequest.email}.` : 'This will remove the selected back-in-stock request.'}
+        confirmLabel="Delete request"
+        onCancel={() => setDeleteRequest(null)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

@@ -3,12 +3,14 @@ import Seo from '../../components/common/Seo';
 import { Plus, Trash2 } from 'lucide-react';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
+import ConfirmationModal from '../../components/common/ConfirmationModal';
 
 export default function AdminCoupons() {
   const [coupons, setCoupons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ code: '', type: 'percentage', value: '', minOrderValue: '0', usageLimit: '1', expiresAt: '' });
+  const [deleteCoupon, setDeleteCoupon] = useState(null);
 
   useEffect(() => { document.title = 'My Store | Admin - Coupons'; }, []);
 
@@ -34,11 +36,12 @@ export default function AdminCoupons() {
     } catch (err) { toast.error(err.response?.data?.message || 'Failed'); }
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('Delete this coupon?')) return;
+  const handleDelete = async () => {
+    if (!deleteCoupon) return;
     try {
-      await API.delete(`/coupons/${id}`);
+      await API.delete(`/coupons/${deleteCoupon._id}`);
       toast.success('Coupon deleted');
+      setDeleteCoupon(null);
       fetchCoupons();
     } catch { toast.error('Failed'); }
   };
@@ -104,7 +107,7 @@ export default function AdminCoupons() {
                     </span>
                   </td>
                   <td className="p-4 text-right">
-                    <button onClick={() => handleDelete(coupon._id)} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
+                    <button onClick={() => setDeleteCoupon(coupon)} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </td>
@@ -114,6 +117,15 @@ export default function AdminCoupons() {
           </table>
         </div>
       )}
+
+      <ConfirmationModal
+        open={!!deleteCoupon}
+        title="Delete this coupon?"
+        description={deleteCoupon ? `This will permanently remove coupon code ${deleteCoupon.code}.` : 'This will permanently remove the selected coupon.'}
+        confirmLabel="Delete coupon"
+        onCancel={() => setDeleteCoupon(null)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

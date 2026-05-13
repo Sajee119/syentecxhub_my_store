@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { Check, X, Trash2, Star } from 'lucide-react';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
+import ConfirmationModal from '../../components/common/ConfirmationModal';
 
 export default function AdminReviews() {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('');
+  const [deleteReview, setDeleteReview] = useState(null);
 
   useEffect(() => { fetchReviews(); }, [filter]);
 
@@ -24,10 +26,11 @@ export default function AdminReviews() {
     fetchReviews();
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('Delete this review?')) return;
-    await API.delete(`/admin/reviews/${id}`);
+  const handleDelete = async () => {
+    if (!deleteReview) return;
+    await API.delete(`/admin/reviews/${deleteReview._id}`);
     toast.success('Review deleted');
+    setDeleteReview(null);
     fetchReviews();
   };
 
@@ -73,12 +76,21 @@ export default function AdminReviews() {
                   {review.isApproved ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
                   {review.isApproved ? 'Approved' : 'Pending'}
                 </button>
-                <button onClick={() => handleDelete(review._id)} className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"><Trash2 className="w-4 h-4" /></button>
+                <button onClick={() => setDeleteReview(review)} className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"><Trash2 className="w-4 h-4" /></button>
               </div>
             </div>
           </div>
         ))}
       </div>
+
+      <ConfirmationModal
+        open={!!deleteReview}
+        title="Delete this review?"
+        description={deleteReview ? 'This will permanently remove the selected review from the admin panel.' : 'This will permanently remove the selected review.'}
+        confirmLabel="Delete review"
+        onCancel={() => setDeleteReview(null)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

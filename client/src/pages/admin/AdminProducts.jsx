@@ -5,11 +5,13 @@ import { Plus, Edit2, Trash2, Search } from 'lucide-react';
 import API from '../../api/axios';
 import { TableSkeleton } from '../../components/common/LoadingSkeleton';
 import toast from 'react-hot-toast';
+import ConfirmationModal from '../../components/common/ConfirmationModal';
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [deleteProduct, setDeleteProduct] = useState(null);
 
   useEffect(() => { document.title = 'My Store | Admin - Products'; }, []);
 
@@ -21,11 +23,12 @@ export default function AdminProducts() {
 
   useEffect(() => { fetchProducts(); }, []);
 
-  const handleDelete = async (id) => {
-    if (!confirm('Delete this product?')) return;
+  const handleDelete = async () => {
+    if (!deleteProduct) return;
     try {
-      await API.delete(`/products/${id}`);
+      await API.delete(`/products/${deleteProduct._id}`);
       toast.success('Product deleted');
+      setDeleteProduct(null);
       fetchProducts();
     } catch { toast.error('Failed to delete'); }
   };
@@ -95,7 +98,7 @@ export default function AdminProducts() {
                         <Link to={`/admin/products/edit/${product._id}`} className="p-2 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg">
                           <Edit2 className="w-4 h-4" />
                         </Link>
-                        <button onClick={() => handleDelete(product._id)} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
+                        <button onClick={() => setDeleteProduct(product)} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -107,6 +110,15 @@ export default function AdminProducts() {
           </div>
         </div>
       )}
+
+      <ConfirmationModal
+        open={!!deleteProduct}
+        title="Delete this product?"
+        description={deleteProduct ? `This will permanently remove ${deleteProduct.name} from your catalog.` : 'This will permanently remove the selected product from your catalog.'}
+        confirmLabel="Delete product"
+        onCancel={() => setDeleteProduct(null)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

@@ -4,11 +4,13 @@ import { Search, Ban, Trash2, Shield } from 'lucide-react';
 import API from '../../api/axios';
 import { TableSkeleton } from '../../components/common/LoadingSkeleton';
 import toast from 'react-hot-toast';
+import ConfirmationModal from '../../components/common/ConfirmationModal';
 
 export default function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [deleteUser, setDeleteUser] = useState(null);
 
   useEffect(() => { document.title = 'My Store | Admin - Users'; }, []);
 
@@ -36,11 +38,12 @@ export default function AdminUsers() {
     } catch { toast.error('Failed'); }
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('Delete this user?')) return;
+  const handleDelete = async () => {
+    if (!deleteUser) return;
     try {
-      await API.delete(`/users/${id}`);
+      await API.delete(`/users/${deleteUser._id}`);
       toast.success('User deleted');
+      setDeleteUser(null);
       fetchUsers();
     } catch { toast.error('Failed'); }
   };
@@ -98,7 +101,7 @@ export default function AdminUsers() {
                         <button onClick={() => handleBan(u._id)} className="p-2 text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg" title={u.isBanned ? 'Unban' : 'Ban'}>
                           <Ban className="w-4 h-4" />
                         </button>
-                        <button onClick={() => handleDelete(u._id)} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
+                        <button onClick={() => setDeleteUser(u)} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -110,6 +113,15 @@ export default function AdminUsers() {
           </div>
         </div>
       )}
+
+      <ConfirmationModal
+        open={!!deleteUser}
+        title="Delete this user?"
+        description={deleteUser ? `This will permanently remove ${deleteUser.name} and their account data.` : 'This will permanently remove the selected user.'}
+        confirmLabel="Delete user"
+        onCancel={() => setDeleteUser(null)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

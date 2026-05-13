@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Package, ShoppingCart, Users, Tags, Percent, HelpCircle, Mail, Star, Bell, LogOut, Menu, X, ChevronDown, Store } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import ConfirmationModal from '../components/common/ConfirmationModal';
 
 const sidebarLinks = [
   { path: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
@@ -18,12 +19,14 @@ const sidebarLinks = [
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     await logout();
+    setShowLogoutConfirm(false);
     navigate('/login');
   };
 
@@ -54,7 +57,7 @@ export default function AdminLayout() {
           <Link to="/" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 mb-2">
             <Store className="w-4 h-4" /> View Store
           </Link>
-          <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 text-sm text-red-500 hover:text-red-700 w-full">
+          <button onClick={() => setShowLogoutConfirm(true)} className="flex items-center gap-2 px-4 py-2 text-sm text-red-500 hover:text-red-700 w-full">
             <LogOut className="w-4 h-4" /> Logout
           </button>
         </div>
@@ -78,6 +81,15 @@ export default function AdminLayout() {
           <Outlet />
         </main>
       </div>
+
+      <ConfirmationModal
+        open={showLogoutConfirm}
+        title="Sign out of admin?"
+        description="This will end your admin session and return you to the login screen."
+        confirmLabel="Sign out"
+        onCancel={() => setShowLogoutConfirm(false)}
+        onConfirm={handleLogout}
+      />
     </div>
   );
 }

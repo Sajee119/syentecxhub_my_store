@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, X, Check } from 'lucide-react';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
+import ConfirmationModal from '../../components/common/ConfirmationModal';
 
 const categoryOptions = [
   { value: 'orders', label: 'Orders' },
@@ -17,6 +18,7 @@ export default function AdminFAQ() {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ question: '', answer: '', category: 'general', order: 0 });
+  const [deleteFaq, setDeleteFaq] = useState(null);
 
   useEffect(() => { fetchFAQs(); }, []);
 
@@ -46,10 +48,11 @@ export default function AdminFAQ() {
     setShowForm(true);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('Delete this FAQ?')) return;
-    await API.delete(`/faqs/${id}`);
+  const handleDelete = async () => {
+    if (!deleteFaq) return;
+    await API.delete(`/faqs/${deleteFaq._id}`);
     toast.success('FAQ deleted');
+    setDeleteFaq(null);
     fetchFAQs();
   };
 
@@ -117,7 +120,7 @@ export default function AdminFAQ() {
                   <td className="p-4"><span className="px-2 py-1 text-xs rounded-full bg-primary-50 dark:bg-primary-900/20 text-primary-600 capitalize">{faq.category}</span></td>
                   <td className="p-4 text-right">
                     <button onClick={() => handleEdit(faq)} className="p-2 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg"><Edit2 className="w-4 h-4" /></button>
-                    <button onClick={() => handleDelete(faq._id)} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"><Trash2 className="w-4 h-4" /></button>
+                    <button onClick={() => setDeleteFaq(faq)} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"><Trash2 className="w-4 h-4" /></button>
                   </td>
                 </tr>
               ))}
@@ -126,6 +129,15 @@ export default function AdminFAQ() {
         </div>
         {faqs.length === 0 && <p className="text-center text-gray-400 py-12">No FAQs yet.</p>}
       </div>
+
+      <ConfirmationModal
+        open={!!deleteFaq}
+        title="Delete this FAQ?"
+        description={deleteFaq ? `This will permanently remove \"${deleteFaq.question}\".` : 'This will permanently remove the selected FAQ.'}
+        confirmLabel="Delete FAQ"
+        onCancel={() => setDeleteFaq(null)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
+import ConfirmationModal from '../../components/common/ConfirmationModal';
 
 const schema = z.object({
   name: z.string().min(2).max(200),
@@ -30,6 +31,8 @@ export default function AdminProductForm() {
   const [fetching, setFetching] = useState(true);
   const [imagePreview, setImagePreview] = useState('');
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [showSaveConfirm, setShowSaveConfirm] = useState(false);
+  const [pendingProduct, setPendingProduct] = useState(null);
 
   useEffect(() => { document.title = `My Store | ${id ? 'Edit Product' : 'Add Product'}`; }, [id]);
 
@@ -73,9 +76,33 @@ export default function AdminProductForm() {
     } else setFetching(false);
   }, [id, reset]);
 
-  const onSubmit = async (data) => {
+  const saveProduct = async (productData) => {
     setLoading(true);
-    const payload = {
+    const normalizedPayload = {
+      ...productData,
+      images: productData.imageUrl ? [{ url: productData.imageUrl, alt: productData.imageAlt || '' }] : [],
+      price: parseFloat(productData.price),
+      originalPrice: productData.originalPrice ? parseFloat(productData.originalPrice) : undefined,
+      stock: parseInt(productData.stock),
+      tags: productData.tags ? productData.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
+    };
+    try {
+      if (id) {
+        await API.put(`/products/${id}`, normalizedPayload);
+        toast.success('Product updated!');
+      } else {
+        await API.post('/products', normalizedPayload);
+        toast.success('Product created!');
+      }
+      setShowSaveConfirm(false);
+      setPendingProduct(null);
+      navigate('/admin/products');
+    } catch (err) { toast.error(err.response?.data?.message || 'Failed'); }
+    finally { setLoading(false); }
+  };
+
+  const onSubmit = async (data) => {
+    const productPayload = {
       ...data,
       images: data.imageUrl ? [{ url: data.imageUrl, alt: data.imageAlt || '' }] : [],
       price: parseFloat(data.price),
@@ -83,17 +110,14 @@ export default function AdminProductForm() {
       stock: parseInt(data.stock),
       tags: data.tags ? data.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
     };
-    try {
-      if (id) {
-        await API.put(`/products/${id}`, payload);
-        toast.success('Product updated!');
-      } else {
-        await API.post('/products', payload);
-        toast.success('Product created!');
-      }
-      navigate('/admin/products');
-    } catch (err) { toast.error(err.response?.data?.message || 'Failed'); }
-    finally { setLoading(false); }
+
+    if (id) {
+      setPendingProduct(productPayload);
+      setShowSaveConfirm(true);
+      return;
+    }
+
+    await saveProduct(productPayload);
   };
 
   if (fetching) return <div className="animate-pulse h-96 bg-gray-200 dark:bg-gray-800 rounded-2xl" />;
@@ -185,6 +209,15 @@ export default function AdminProductForm() {
           <button type="submit" disabled={loading} className="btn-primary">{loading ? 'Saving...' : id ? 'Update Product' : 'Create Product'}</button>
         </form>
       </div>
+
+      <ConfirmationModal
+        open={showSaveConfirm}
+        title="Save product changes?"
+        description={pendingProduct ? `This will update ${pendingProduct.name} in your catalog.` : 'This will update the selected product in your catalog.'}
+        confirmLabel="Update product"
+        onCancel={() => { setShowSaveConfirm(false); setPendingProduct(null); }}
+        onConfirm={() => pendingProduct && saveProduct(pendingProduct)}
+      />
     </div>
   );
 }

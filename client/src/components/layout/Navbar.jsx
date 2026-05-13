@@ -6,6 +6,7 @@ import { useCart } from '../../context/CartContext';
 import { useTheme } from '../../context/ThemeContext';
 import SearchSuggestions from '../common/SearchSuggestions';
 import CartDrawer from '../cart/CartDrawer';
+import ConfirmationModal from '../common/ConfirmationModal';
 
 export default function Navbar() {
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -14,6 +15,7 @@ export default function Navbar() {
   const [userMenu, setUserMenu] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const searchRef = useRef(null);
   const { user, logout } = useAuth();
   const { getCartCount } = useCart();
@@ -33,6 +35,7 @@ export default function Navbar() {
   const handleLogout = async () => {
     await logout();
     setUserMenu(false);
+    setShowLogoutConfirm(false);
     navigate('/');
   };
 
@@ -108,7 +111,7 @@ export default function Navbar() {
                           <Package className="w-4 h-4" /> Admin Panel
                         </Link>
                       )}
-                      <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 text-sm text-red-500 hover:bg-gray-50 dark:hover:bg-gray-800 w-full border-t border-gray-200 dark:border-gray-800">
+                      <button onClick={() => { setUserMenu(false); setShowLogoutConfirm(true); }} className="flex items-center gap-3 px-4 py-3 text-sm text-red-500 hover:bg-gray-50 dark:hover:bg-gray-800 w-full border-t border-gray-200 dark:border-gray-800">
                         <LogOut className="w-4 h-4" /> Sign Out
                       </button>
                     </div>
@@ -150,6 +153,15 @@ export default function Navbar() {
         </div>
       )}
       {searchOpen && <div className="fixed inset-0 z-[-1]" onClick={() => { setSearchOpen(false); setShowSuggestions(false); }} />}
+
+      <ConfirmationModal
+        open={showLogoutConfirm}
+        title="Sign out of your account?"
+        description="You will need to log in again to access your account and admin tools."
+        confirmLabel="Sign out"
+        onCancel={() => setShowLogoutConfirm(false)}
+        onConfirm={handleLogout}
+      />
 
       {mobileMenu && (
         <div className="md:hidden border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 animate-slide-down">

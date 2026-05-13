@@ -3,6 +3,7 @@ import Seo from '../../components/common/Seo';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
+import ConfirmationModal from '../../components/common/ConfirmationModal';
 
 export default function AdminCategories() {
   const [categories, setCategories] = useState([]);
@@ -10,6 +11,7 @@ export default function AdminCategories() {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ name: '', description: '' });
+  const [deleteCategory, setDeleteCategory] = useState(null);
 
   useEffect(() => { document.title = 'My Store | Admin - Categories'; }, []);
 
@@ -42,11 +44,12 @@ export default function AdminCategories() {
     setShowForm(true);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('Delete this category?')) return;
+  const handleDelete = async () => {
+    if (!deleteCategory) return;
     try {
-      await API.delete(`/categories/${id}`);
+      await API.delete(`/categories/${deleteCategory._id}`);
       toast.success('Category deleted');
+      setDeleteCategory(null);
       fetchCategories();
     } catch { toast.error('Failed'); }
   };
@@ -92,7 +95,7 @@ export default function AdminCategories() {
                   <td className="p-4 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <button onClick={() => handleEdit(cat)} className="p-2 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg"><Edit2 className="w-4 h-4" /></button>
-                      <button onClick={() => handleDelete(cat._id)} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"><Trash2 className="w-4 h-4" /></button>
+                      <button onClick={() => setDeleteCategory(cat)} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"><Trash2 className="w-4 h-4" /></button>
                     </div>
                   </td>
                 </tr>
@@ -101,6 +104,15 @@ export default function AdminCategories() {
           </table>
         </div>
       )}
+
+      <ConfirmationModal
+        open={!!deleteCategory}
+        title="Delete this category?"
+        description={deleteCategory ? `This will remove ${deleteCategory.name} and may affect any products that use it.` : 'This will remove the selected category.'}
+        confirmLabel="Delete category"
+        onCancel={() => setDeleteCategory(null)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }
