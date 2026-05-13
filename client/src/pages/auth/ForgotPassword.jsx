@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Package, Mail, ArrowLeft } from 'lucide-react';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
+import logo from '../../assets/logo.png';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -31,9 +32,9 @@ export default function ForgotPassword() {
       <Seo title="Forgot Password" description="Reset your password to regain access to your account." />
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 text-3xl font-extrabold text-primary-600 mb-2">
-            <Package className="w-8 h-8" /> My Store
-          </Link>
+          <div className="inline-flex items-center gap-2 text-3xl font-extrabold text-primary-600 mb-2">
+            <img src={logo} alt="My Store" className="w-8 h-8 object-contain" /> My Store
+          </div>
           <p className="text-gray-500">Reset your password</p>
         </div>
         <div className="glass-card p-8">

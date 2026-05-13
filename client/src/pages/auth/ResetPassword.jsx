@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
+import logo from '../../assets/logo.png';
 
 const schema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters'),
@@ -43,9 +44,9 @@ export default function ResetPassword() {
       <Seo title="Reset Password" description="Create a new password for your account." />
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 text-3xl font-extrabold text-primary-600 mb-2">
-            <Package className="w-8 h-8" /> My Store
-          </Link>
+          <div className="inline-flex items-center gap-2 text-3xl font-extrabold text-primary-600 mb-2">
+            <img src={logo} alt="My Store" className="w-8 h-8 object-contain" /> My Store
+          </div>
           <p className="text-gray-500">Enter your new password</p>
         </div>
         <div className="glass-card p-8">

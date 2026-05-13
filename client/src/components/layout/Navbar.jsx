@@ -7,6 +7,7 @@ import { useTheme } from '../../context/ThemeContext';
 import SearchSuggestions from '../common/SearchSuggestions';
 import CartDrawer from '../cart/CartDrawer';
 import ConfirmationModal from '../common/ConfirmationModal';
+import logo from '../../assets/logo.png';
 
 export default function Navbar() {
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -44,8 +45,8 @@ export default function Navbar() {
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center gap-2 text-2xl font-extrabold text-primary-600">
-            <Package className="w-7 h-7" />
+          <Link to="/" className="flex itemLs-center gap-2 text-2xl font-extrabold text-primary-600">
+            <img src={logo} alt="My Store" className="w-7 h-7 object-contain" />
             <span className="hidden sm:inline">My Store</span>
           </Link>
 

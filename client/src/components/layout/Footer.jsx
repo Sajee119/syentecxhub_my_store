@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Package, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
+import logo from '../../assets/logo.png';
 
 export default function Footer() {
   return (
@@ -7,9 +8,9 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           <div>
-            <Link to="/" className="flex items-center gap-2 text-2xl font-extrabold text-white mb-4">
-              <Package className="w-7 h-7 text-primary-400" /> My Store
-            </Link>
+            <div className="flex items-center gap-2 text-2xl font-extrabold text-white mb-4">
+              <img src={logo} alt="My Store" className="w-7 h-7 object-contain" /> My Store
+            </div>
             <p className="text-gray-400 mb-6 leading-relaxed">Your premium destination for quality products. Shop with confidence and enjoy fast, free shipping.</p>
             <div className="flex gap-3">
               {[Facebook, Twitter, Instagram, Youtube].map((Icon, i) => (

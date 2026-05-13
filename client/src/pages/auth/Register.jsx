@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { useAuth } from '../../context/AuthContext';
 import Seo from '../../components/common/Seo';
 import toast from 'react-hot-toast';
+import logo from '../../assets/logo.png';
 
 const schema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(50),
@@ -49,9 +50,9 @@ export default function Register() {
       <Seo title="Create Account" description="Create your MyStore account for faster checkout and order tracking." />
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 text-3xl font-extrabold text-primary-600 mb-2">
-            <Package className="w-8 h-8" /> My Store
-          </Link>
+          <div className="inline-flex items-center gap-2 text-3xl font-extrabold text-primary-600 mb-2">
+            <img src={logo} alt="My Store" className="w-8 h-8 object-contain" /> My Store
+          </div>
           <p className="text-gray-500">Create your account and start shopping</p>
         </div>
         <div className="glass-card p-8">
