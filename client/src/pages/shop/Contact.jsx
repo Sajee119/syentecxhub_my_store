@@ -2,12 +2,11 @@ import { useState } from 'react';
 import { Mail, Phone, MapPin, Send, MessageSquare, Clock, ChevronRight } from 'lucide-react';
 import Breadcrumb from '../../components/common/Breadcrumb';
 import Seo from '../../components/common/Seo';
-import toast from 'react-hot-toast';
 
 const contactInfo = [
-  { icon: Mail, label: 'Email', value: 'support@mystore.com', href: 'mailto:support@mystore.com' },
-  { icon: Phone, label: 'Phone', value: '+1 (800) 123-4567', href: 'tel:+18001234567' },
-  { icon: MapPin, label: 'Address', value: '123 Commerce St, Suite 100, San Francisco, CA 94102' },
+  { icon: Mail, label: 'Email', value: 'support@mystore.com', href: 'mailto:sajeepan634@gmail.com' },
+  { icon: Phone, label: 'Phone', value: '+94 (783) 566-823', href: 'tel:+94783566823' },
+  { icon: MapPin, label: 'Address', value: 'Jaffna, Sri Lanka' },
   { icon: Clock, label: 'Hours', value: 'Mon-Fri: 9AM-6PM EST' },
 ];
 
@@ -19,19 +18,7 @@ const faqs = [
 ];
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
-  const [sending, setSending] = useState(false);
   const [faqOpen, setFaqOpen] = useState(null);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setSending(true);
-    setTimeout(() => {
-      toast.success('Message sent! We\'ll get back to you soon.');
-      setForm({ name: '', email: '', subject: '', message: '' });
-      setSending(false);
-    }, 1000);
-  };
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
@@ -47,28 +34,29 @@ export default function Contact() {
           <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6 flex items-center gap-2">
             <MessageSquare className="w-5 h-5 text-primary-600" /> Send us a Message
           </h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form action="https://api.web3forms.com/submit" method="POST" className="space-y-4">
+            <input type="hidden" name="access_key" value="de24f8a7-3d99-44dd-9678-918f32dd6467" />
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-2">Name</label>
-                <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required className="input-field" placeholder="Your name" />
+                <input type="text" name="name" required className="input-field" placeholder="Your name" />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2">Email</label>
-                <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required className="input-field" placeholder="you@example.com" />
+                <input type="email" name="email" required className="input-field" placeholder="you@example.com" />
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Subject</label>
-              <input value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} required className="input-field" placeholder="How can we help?" />
+              <input type="text" name="subject" required className="input-field" placeholder="How can we help?" />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Message</label>
-              <textarea value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} required rows={5} className="input-field resize-none" placeholder="Tell us more about your inquiry..." />
+              <textarea name="message" required rows={5} className="input-field resize-none" placeholder="Tell us more about your inquiry..." />
             </div>
-            <button type="submit" disabled={sending} className="btn-primary flex items-center gap-2">
-              {sending ? <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" /> : <Send className="w-4 h-4" />}
-              {sending ? 'Sending...' : 'Send Message'}
+            <button type="submit" className="btn-primary flex items-center gap-2">
+              <Send className="w-4 h-4" />
+              Send Message
             </button>
           </form>
         </div>
