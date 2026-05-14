@@ -49,6 +49,7 @@ A modern, production-ready e-commerce platform built with the MERN stack (MongoD
 - User management (ban, role change)
 - Category management
 - Coupon management
+- Contact form with Web3Forms integration
 
 ### General
 - Responsive mobile-first design
@@ -58,6 +59,7 @@ A modern, production-ready e-commerce platform built with the MERN stack (MongoD
 - Toast notifications
 - Role-based access control
 - 404 page
+- Environment-based API configuration
 
 ## 📁 Project Structure
 
@@ -135,6 +137,15 @@ FROM_EMAIL=noreply@mystore.com
 FROM_NAME=My Store
 ```
 
+**client/.env**
+```env
+VITE_API_URL=http://localhost:5000
+VITE_WEB3FORMS_URL=https://api.web3forms.com/submit
+VITE_WEB3FORMS_ACCESS_KEY=your_web3forms_access_key
+```
+
+> **Note:** In production, update `VITE_API_URL` to your deployed backend URL (e.g., https://your-api.onrender.com)
+
 ### 3. Seed the Database
 
 ```bash
@@ -149,7 +160,42 @@ This creates:
 - **Products**: 14 products
 - **Reviews**: Sample reviews
 
-### 4. Start Development
+### 4. API Configuration
+
+The frontend uses a centralized API request utility (`src/api/axios.js`) that:
+- Automatically adds JWT token to all requests from `localStorage`
+- Uses `VITE_API_URL` from `.env` for the backend URL
+- Handles error messages and response parsing
+- Throws descriptive errors
+
+**Usage in components:**
+```javascript
+import API from '@/api/axios';
+
+// GET request
+const data = await API.get('/api/products');
+
+// POST request
+const result = await API.post('/api/cart/add', { productId, quantity });
+
+// PUT/PATCH request
+const updated = await API.put('/api/orders/123', { status: 'shipped' });
+
+// DELETE request
+await API.delete('/api/cart/items/123');
+```
+
+### 5. Contact Form Setup (Web3Forms)
+
+The contact form at `/contact` uses **Web3Forms** for email delivery:
+- No backend email server needed
+- Configuration via environment variables
+- Emails sent to: sajeepan634@gmail.com
+- To change the email, update `VITE_WEB3FORMS_ACCESS_KEY`
+
+Get your access key: https://web3forms.com
+
+### 6. Start Development
 
 ```bash
 # Terminal 1 - Backend
@@ -166,23 +212,53 @@ Admin panel at **http://localhost:5173/admin**
 
 ## 🌐 Deployment
 
-### Frontend (Vercel/Netlify)
+### Frontend (Vercel)
+
+1. **Build the project:**
 ```bash
 cd client
 npm run build
 ```
-Deploy the `dist/` folder to Vercel or Netlify.
-Update the Vite proxy in production by setting the API URL in environment.
 
-### Backend (Render/Railway)
-```bash
-cd server
-npm start
-```
-Set the environment variables in your hosting dashboard.
+2. **Deploy to Vercel:**
+   - Push to GitHub
+   - Connect repo to Vercel dashboard
+   - Add environment variables in Vercel Settings:
+     ```
+     VITE_API_URL=https://your-api.onrender.com
+     VITE_WEB3FORMS_URL=https://api.web3forms.com/submit
+     VITE_WEB3FORMS_ACCESS_KEY=your_web3forms_key
+     ```
+   - Deploy automatically on push
+
+### Backend (Render)
+
+1. **Push server code to GitHub**
+
+2. **Create a new Web Service on Render:**
+   - Connect GitHub repo
+   - Set build command: `npm install`
+   - Set start command: `npm start`
+   - Add environment variables:
+     ```
+     NODE_ENV=production
+     MONGODB_URI=mongodb+srv://...
+     JWT_SECRET=your_production_secret
+     CLIENT_URL=https://your-vercel-domain.com
+     CLOUDINARY_*=your_cloudinary_keys
+     SMTP_*=your_email_settings
+     ```
+   - Deploy
+
+3. **Update CLIENT_URL in server .env** to your Vercel frontend URL for CORS
 
 ### Database
-Use **MongoDB Atlas** for production.
+
+Use **MongoDB Atlas** for production:
+1. Create a free cluster at https://www.mongodb.com/cloud/atlas
+2. Get connection string: `mongodb+srv://user:password@cluster.mongodb.net/dbname`
+3. Add IP address to Atlas network access
+4. Set as `MONGODB_URI` on Render
 
 ## 🔒 API Endpoints
 
@@ -204,6 +280,30 @@ Use **MongoDB Atlas** for production.
 | GET | /api/admin/stats | Dashboard stats | Admin |
 | GET | /api/admin/revenue | Revenue data | Admin |
 
-## 📄 License
+## � Troubleshooting
+
+### Blank White Screen
+- Ensure `VITE_API_URL` is set correctly in `.env`
+- Check browser console for errors (DevTools → Console)
+- Verify backend is running and accessible
+- Clear browser cache and restart dev server
+
+### API Connection Errors
+- Check that backend is running on the correct port
+- Verify `VITE_API_URL` matches backend URL
+- Check CORS settings in `server/app.js` for `CLIENT_URL`
+- Look at Network tab in DevTools to see failed requests
+
+### Contact Form Not Working
+- Verify `VITE_WEB3FORMS_ACCESS_KEY` is valid
+- Check browser console for Web3Forms errors
+- Test Web3Forms directly: https://web3forms.com/test
+
+### Database Connection Issues
+- Verify `MONGODB_URI` is correct
+- Check MongoDB is running (local) or Atlas network access (cloud)
+- Add your IP to MongoDB Atlas whitelist (production)
+
+## �📄 License
 
 MIT
