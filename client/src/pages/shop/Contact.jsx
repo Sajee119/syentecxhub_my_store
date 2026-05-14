@@ -34,8 +34,8 @@ export default function Contact() {
           <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6 flex items-center gap-2">
             <MessageSquare className="w-5 h-5 text-primary-600" /> Send us a Message
           </h2>
-          <form action="https://api.web3forms.com/submit" method="POST" className="space-y-4">
-            <input type="hidden" name="access_key" value="de24f8a7-3d99-44dd-9678-918f32dd6467" />
+          <form action={import.meta.env.VITE_WEB3FORMS_URL || 'https://api.web3forms.com/submit'} method="POST" className="space-y-4">
+            <input type="hidden" name="access_key" value={import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || 'de24f8a7-3d99-44dd-9678-918f32dd6467'} />
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-2">Name</label>
